@@ -1,5 +1,10 @@
 package ecatfm.com;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +14,9 @@ import ecatfm.com.Manteniment6.Persona;
 
 public class PrepStat {
 // Exercici amb PreparedStatements
+	
+	
+	
 	
 	
 	class Persona {
@@ -40,6 +48,59 @@ public class PrepStat {
 		}
 				
 	}
+	
+	private Connection getConnection(){
+		
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			// Define the data source for the driver - La BBDD és persones.
+			String sourceURL = "jdbc:mysql://localhost/personas";
+			// Create a connection through the DriverManager
+			Connection databaseConnection = DriverManager.getConnection(sourceURL, "root", "");
+			
+			return databaseConnection;
+		
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private List<Persona> selectPersona() {
+		// Aquesta funció selecciona totes les dades SELECT de les persones
+		Connection conn = getConnection();
+		Statement statement;
+		
+		try {
+			statement = conn.createStatement();
+			
+			ResultSet personasRS = statement.executeQuery("SELECT * FROM prueba");
+			List<Persona> personas = new ArrayList<Persona>();
+			
+			// Afegim noms, dnis i edats al ArrayList de Persones persona
+			while (personasRS.next()){
+				Persona p = new Persona();
+				
+				p.setNom(personasRS.getString("nom"));
+				p.setDni(personasRS.getString("dni"));
+				p.setEdat(personasRS.getInt("edat"));
+				
+				personas.add(p);
+			}
+			
+			return personas;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null ;
 	
 	
 	public static void main(String[] args) {
